@@ -1,31 +1,37 @@
-# ✍️ Premium Blog System (Vue 3 + Firebase)
+# ✍️ Premium Blog System (Vue 3 + Firebase + Supabase + Cloudinary)
 
-ระบบบล็อกสไตล์มินิมอลที่มีลูกเล่นระดับพรีเมียม (Glassmorphism & Micro-animations) พัฒนาด้วย **Vue 3** ร่วมกับ **Firebase** สำหรับเป็นบล็อกส่วนตัวหรือแพลตฟอร์มเผยแพร่บทความ
+ระบบบล็อกสไตล์มินิมอลที่มีลูกเล่นระดับพรีเมียม (Glassmorphism & Micro-animations) พัฒนาขึ้นโดยสถาปัตยกรรมแบบผสมผสาน (Hybrid Serverless Architecture) เพื่อดึงประสิทธิภาพสูงสุดของแต่ละแพลตฟอร์มออกมาใช้งานร่วมกัน
+
+---
+
+## 🏗️ สถาปัตยกรรมและเทคโนโลยีที่ใช้ (Architecture & Tech Stack)
+
+ระบบนี้ขับเคลื่อนด้วยการประสานงานของ 4 เทคโนโลยีหลัก:
+
+```mermaid
+graph TD
+    Client[Vue 3 Frontend] -->|1. ลงทะเบียน / ล็อกอิน| FirebaseAuth[Firebase Auth]
+    Client -->|2. อัปโหลดรูปภาพตรง| Cloudinary[Cloudinary Media CDN]
+    Client -->|3. อ่าน/เขียนข้อมูลบล็อก| Supabase[(Supabase PostgreSQL)]
+    
+    FirebaseAuth -->|เชื่อมโยงบัญชีผ่าน UID| Supabase
+```
+
+*   **Frontend**: **Vue 3 (Composition API)** พัฒนาด้วยความรวดเร็วบน **Vite** พร้อมจัดการสเตทด้วย **Pinia** และจัดการเส้นทางด้วย **Vue Router**
+*   **Authentication**: **Firebase Auth** (จัดการล็อกอินผ่าน Email/Password และ Google Sign-In) มีความปลอดภัยและเสถียรภาพสูง
+*   **Database**: **Supabase (PostgreSQL)** จัดเก็บข้อมูลที่มีความสัมพันธ์แบบ Relational (บทความ, คอมเมนต์, แท็ก, และข้อมูลโปรไฟล์)
+*   **Media Hosting**: **Cloudinary** จัดการจัดเก็บรูปภาพหน้าปกและรูปโปรไฟล์ผู้ใช้ พร้อมลดขนาดและแปลงไฟล์ภาพให้เหมาะสมกับอุปกรณ์ใช้งานโดยอัตโนมัติ (Dynamic Optimization)
+*   **Styling & Motion**: **Vanilla CSS** (CSS Variables & CSS Nesting) ร่วมกับ **@vueuse/motion** สำหรับการสร้างดีไซน์ Glassmorphism และ Micro-animations ที่ลื่นไหล
 
 ---
 
 ## ✨ คุณสมบัติเด่น (Key Features)
 
-*   **⚡ Modern Vue 3 & Vite**: เขียนด้วย Composition API (`<script setup>`) รวดเร็ว มีประสิทธิภาพสูง
-*   **🔥 Real-time Database**: ใช้ **Firebase Firestore** ในการเก็บข้อมูลบทความและการแสดงความคิดเห็นแบบเรียลไทม์
-*   **🔐 Authentication**: ระบบล็อกอินสำหรับผู้เขียนบล็อกด้วย **Firebase Auth** (รองรับ Email/Password และ Google Sign-In)
-*   **📷 Cloud Storage**: อัปโหลดรูปภาพหน้าปกและภาพประกอบบทความผ่าน **Firebase Storage**
-*   **🌓 Dark/Light Mode**: เปลี่ยนธีมสว่างและมืดได้ลื่นไหล พร้อมเก็บข้อมูลธีมที่ผู้ใช้เลือกไว้ใน LocalStorage
-*   **📝 Markdown Editor**: เขียนบทความด้วยรูปแบบ Markdown พร้อมการแสดงตัวอย่างแบบเรียลไทม์ (Live Preview)
-*   **💬 Interactive Comments**: ระบบคอมเมนต์ใต้บทความแบบเรียลไทม์
-
----
-
-## 🛠️ เทคโนโลยีที่ใช้ (Tech Stack)
-
-*   **Frontend**: Vue 3 (Composition API), Vite, Vue Router, Pinia
-*   **Backend & Database**: Firebase (Auth, Firestore, Cloud Storage)
-*   **Styling**: Vanilla CSS (ใช้ Modern CSS Nesting & CSS Variables)
-*   **Libraries เพิ่มเติม**:
-    *   `lucide-vue-next` (ชุดไอคอน SVG)
-    *   `marked` (สำหรับแปลง Markdown เป็น HTML)
-    *   `dompurify` (ป้องกันการโจมตีประเภท XSS จากบทความ/คอมเมนต์)
-    *   `@vueuse/motion` (สำหรับ Micro-animations)
+*   **⚡ High Performance**: หน้าเว็บโหลดรูปภาพรวดเร็วมากจาก Cloudinary CDN พร้อมโค้ด Vue 3 ที่ผ่านการบิลด์ด้วย Vite
+*   **🔐 Secure Multi-Auth**: ล็อกอินผ่านผู้ให้บริการระดับสากลด้วย Firebase Auth
+*   **📝 Markdown Editor**: เขียนและแก้ไขบทความในรูปแบบ Markdown พร้อมระบบ Live Preview และระบบอัปโหลดภาพประกอบตรงไปยัง Cloudinary
+*   **💬 Real-time Comments & Interaction**: ระบบคอมเมนต์ใต้บทความแบบเรียลไทม์ผ่านการเชื่อมโยงข้อมูลใน Supabase
+*   **🌓 Smooth Dark/Light Mode**: สลับธีมสว่างและมืดได้นุ่มนวล พร้อมบันทึกสถานะธีมของผู้ใช้โดยอัตโนมัติ
 
 ---
 
@@ -33,90 +39,115 @@
 
 ```text
 src/
-├── assets/          # สไตล์หลักและรูปภาพประกอบ
-│   └── main.css     # CSS Variables & Global Theme
-├── components/      # UI Components ที่แชร์ใช้งานร่วมกัน
+├── assets/          # ไฟล์สไตล์และฟอนต์หลัก
+│   └── main.css     # CSS Variables & Global Style (ธีมระบบ)
+├── components/      # คอมโพเนนต์ที่นำกลับมาใช้ใหม่ได้
 │   ├── BlogCard.vue
 │   ├── CommentSection.vue
 │   ├── Navbar.vue
 │   └── Footer.vue
-├── views/           # หน้าเว็บหลัก (Pages)
-│   ├── HomeView.vue        # หน้าหลักรายการบล็อก
-│   ├── PostDetailView.vue  # หน้าอ่านบทความตัวเต็ม
-│   ├── DashboardView.vue   # แดชบอร์ดจัดการบล็อก (สำหรับ Author)
-│   ├── EditorView.vue      # หน้าเขียน/แก้ไขบล็อก
-│   └── LoginView.vue       # หน้าเข้าสู่ระบบ
+├── views/           # หน้าจอหลัก (Pages)
+│   ├── HomeView.vue        # หน้าแรกแสดงรายการบล็อก
+│   ├── PostDetailView.vue  # หน้าอ่านบทความฉบับเต็ม
+│   ├── DashboardView.vue   # แดชบอร์ดจัดการบทความของผู้แต่ง
+│   ├── EditorView.vue      # หน้าเขียนและแก้ไขบทความ
+│   └── LoginView.vue       # หน้าเข้าสู่ระบบและสมัครสมาชิก
 ├── router/          # การนำทางหน้าเว็บ (Vue Router)
-├── stores/          # การจัดการ State (Pinia)
-│   ├── auth.js      # จัดการ Login State
-│   └── theme.js     # จัดการธีมสว่าง/มืด
-├── firebase/        # ไฟล์การตั้งค่า Firebase Client
-│   └── config.js
-├── App.vue          # Root Component
+├── stores/          # การจัดการ State กลาง (Pinia)
+│   ├── auth.js      # จัดเก็บข้อมูลล็อกอินจาก Firebase & เชื่อมโยงกับโปรไฟล์ใน Supabase
+│   └── theme.js     # จัดการธีมสว่างและมืด
+├── services/        # ตัวเชื่อมโยงกับบริการภายนอก (External APIs)
+│   ├── firebase.js      # คอนฟิกและสิทธิ์การใช้งาน Firebase Auth
+│   ├── supabase.js      # ตัวเชื่อมต่อไปยังฐานข้อมูล Supabase
+│   └── cloudinary.js    # ฟังก์ชันสำหรับส่งไฟล์ภาพไปยัง Cloudinary
+├── App.vue          # Root component ของโปรเจกต์
 └── main.js          # จุดเริ่มต้นแอปพลิเคชัน
 ```
 
 ---
 
-## ⚙️ การเริ่มต้นใช้งาน (Getting Started)
+## ⚙️ การเริ่มต้นติดตั้ง (Getting Started)
 
-### 1. โคลนโปรเจกต์และติดตั้ง Dependencies
-
+### 1. ติดตั้ง Dependencies และโคลนโปรเจกต์
 ```bash
-# โคลนโปรเจกต์
+# โคลนโปรเจกต์ลงมาในเครื่อง
 git clone <repository-url>
 cd my_blog
 
-# ติดตั้งแพ็กเกจ
+# ติดตั้งไลบรารีทั้งหมด
 npm install
 ```
 
 ### 2. ตั้งค่าตัวแปรสภาพแวดล้อม (Environment Variables)
-
-สร้างไฟล์ `.env` ที่โฟลเดอร์หลัก (Root) ของโปรเจกต์ และใส่ข้อมูลตั้งค่า Firebase ของคุณ:
-
+สร้างไฟล์ `.env` ไว้ที่โฟลเดอร์หลัก (Root) ของโปรเจกต์ และกรอกค่าดังนี้:
 ```env
-VITE_FIREBASE_API_KEY=your_api_key
-VITE_FIREBASE_AUTH_DOMAIN=your_auth_domain
-VITE_FIREBASE_PROJECT_ID=your_project_id
-VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket
-VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
-VITE_FIREBASE_APP_ID=your_app_id
+# Firebase configuration
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain
+VITE_FIREBASE_PROJECT_ID=your_firebase_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_firebase_storage_bucket
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_firebase_messaging_sender_id
+VITE_FIREBASE_APP_ID=your_firebase_app_id
+
+# Supabase configuration
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+
+# Cloudinary configuration
+VITE_CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+VITE_CLOUDINARY_UPLOAD_PRESET=your_cloudinary_unsigned_preset
 ```
 
-### 3. รันโปรเจกต์ในโหมดพัฒนา (Development)
-
+### 3. รันโปรเจกต์สำหรับการพัฒนา (Development)
 ```bash
 npm run dev
 ```
-
-แอปพลิเคชันจะทำงานที่ `http://localhost:5173`
+ระบบจะรันขึ้นที่ `http://localhost:5173`
 
 ---
 
-## 🔥 การตั้งค่า Firebase (Firebase Configuration Guidelines)
+## 🗄️ การจัดเตรียม Database & Services
 
-1.  **Firebase Authentication**:
-    *   เข้าไปที่ Firebase Console
-    *   เปิดใช้งาน **Email/Password** และ **Google** Sign-In ที่เมนู Authentication
-2.  **Cloud Firestore**:
-    *   สร้างฐานข้อมูล Firestore
-    *   ตั้งค่า Security Rules เพื่ออนุญาตให้เฉพาะเจ้าของบล็อกเขียนบทความได้ และบุคคลทั่วไปอ่านบทความได้เท่านั้น ตัวอย่าง Rules:
-        ```javascript
-        rules_version = '2';
-        service cloud.firestore {
-          match /databases/{database}/documents {
-            match /posts/{postId} {
-              allow read: if true;
-              allow write: if request.auth != null; // อนุญาตให้เขียนเฉพาะเมื่อล็อกอินแล้ว
-            }
-            match /comments/{commentId} {
-              allow read: if true;
-              allow write: if true; // หรือ allow write: if request.auth != null;
-            }
-          }
-        }
-        ```
-3.  **Firebase Storage**:
-    *   สร้าง Bucket สำหรับเก็บรูปภาพ
-    *   เปิดสิทธิ์ให้อัปโหลดภาพหน้าปกบทความได้เฉพาะผู้ที่ผ่านการยืนยันตัวตน
+### 1. Supabase (Database Schema Setup)
+รันคำสั่ง SQL ต่อไปนี้ในช่อง **SQL Editor** ของ Supabase เพื่อสร้างตารางที่จำเป็น:
+
+```sql
+-- 1. สร้างตารางโปรไฟล์สำหรับเชื่อมกับ Firebase UID
+create table profiles (
+  firebase_uid text primary key,
+  username text unique not null,
+  full_name text,
+  avatar_url text,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- 2. สร้างตารางสำหรับบทความบล็อก
+create table posts (
+  id uuid default gen_random_uuid() primary key,
+  author_id text references profiles(firebase_uid) on delete cascade not null,
+  title text not null,
+  slug text unique not null,
+  summary text,
+  content text not null,
+  cover_image text,
+  status text default 'draft' check (status in ('draft', 'published')),
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- 3. สร้างตารางสำหรับคอมเมนต์ใต้บทความ
+create table comments (
+  id uuid default gen_random_uuid() primary key,
+  post_id uuid references posts(id) on delete cascade not null,
+  author_id text references profiles(firebase_uid) on delete cascade not null,
+  content text not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+```
+
+### 2. Cloudinary (Unsigned Upload Preset)
+*   สมัครบัญชีและเข้าสู่หน้า Cloudinary Dashboard
+*   ไปที่ **Settings (ฟันเฟือง)** > **Upload**
+*   เลื่อนลงไปที่หัวข้อ **Upload presets** แล้วคลิก **Add upload preset**
+*   ตั้งค่า **Signing Mode** ให้เป็น **Unsigned** เพื่อให้ฝั่งเบราว์เซอร์อัปโหลดขึ้น Cloudinary ได้โดยตรงผ่าน URL API
+*   คัดลอก **Cloud Name** และ **Preset Name** ไปใส่ใน `.env`
