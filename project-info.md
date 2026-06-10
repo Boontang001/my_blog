@@ -87,7 +87,27 @@ create table post_tags (
 
 ---
 
-## 🖼️ 3. Cloudinary Integration Workflow
+## 🔑 3. Login & Authentication Features (ระบบระบุตัวตนและสิทธิ์เข้าถึง)
+
+ระบบล็อกอินและการระบุตัวตนในโปรเจกต์นี้ใช้การทำงานร่วมกันระหว่าง **Firebase Auth** และ **Supabase Database** โดยมีฟีเจอร์และคุณลักษณะเด่นดังนี้:
+
+1. **Multi-Provider Authentication**:
+   - **Email/Password**: รองรับการลงทะเบียนและเข้าสู่ระบบด้วยอีเมลและรหัสผ่านแบบมาตรฐาน พร้อมระบบตรวจสอบความแข็งแกร่งของรหัสผ่าน
+   - **Google Sign-In**: ระบบล็อกอินแบบคลิกเดียว (Single Sign-On) ผ่าน Google SDK ที่ปลอดภัยและสะดวกสบาย
+2. **User Profile Syncing**:
+   - เมื่อผู้ใช้ทำการลงทะเบียนหรือเข้าสู่ระบบเป็นครั้งแรก ระบบจะนำรหัส `uid` จาก Firebase ไปสร้างข้อมูลโปรไฟล์ใหม่ในตาราง `profiles` ของ Supabase (เก็บชื่อ, อีเมล, รูปโปรไฟล์เริ่มต้น) ทำให้การเก็บข้อมูลบทความมีความเป็นระเบียบและอ้างอิงกับตัวตนผู้แต่งได้ถูกต้อง
+3. **Session Persistence**:
+   - บันทึกเซสชันการล็อกอินอย่างถาวรในเบราว์เซอร์ผ่าน Firebase Auth SDK ผู้ใช้ไม่ต้องเข้าสู่ระบบซ้ำเมื่อเปิดแท็บใหม่หรือรีเฟรชหน้าเว็บ
+4. **Route Protection (Vue Router Navigation Guards)**:
+   - ตรวจสอบสิทธิ์การเข้าถึงหน้าเว็บ (Authentication Guards) เช่น ป้องกันไม่ให้ผู้ใช้ทั่วไปที่ไม่ได้ล็อกอินเข้าถึงหน้าเขียนบทความ (`EditorView.vue`) หรือแดชบอร์ดส่วนตัว (`DashboardView.vue`) และจะเด้งกลับไปหน้า Login อัตโนมัติ
+5. **Interactive UI/UX**:
+   - ฟอร์มการกรอกข้อมูลมาพร้อมกับการตรวจสอบความถูกต้อง (Form Validation) เช่น รูปแบบอีเมล ความยาวรหัสผ่าน
+   - การแสดงสถานะการโหลดข้อมูล (Loading State) ด้วย Animation ที่สวยงามลื่นไหล
+   - ระบบกู้คืนรหัสผ่าน (Password Reset) ส่งลิงก์รีเซ็ตรหัสผ่านไปยังอีเมลผู้ใช้
+
+---
+
+## 🖼️ 4. Cloudinary Integration Workflow
 
 การจัดการรูปภาพประกอบบทความจะทำงานผ่านขั้นตอนดังนี้:
 1. ผู้เขียนอัปโหลดรูปภาพผ่านหน้าเขียนบล็อก (Editor)
@@ -99,7 +119,7 @@ create table post_tags (
 
 ---
 
-## ⚙️ 4. Config & Keys ใน `.env`
+## ⚙️ 5. Config & Keys ใน `.env`
 
 สำหรับเชื่อมโยงบริการทั้งหมดเข้าด้วยกัน:
 
@@ -123,7 +143,7 @@ VITE_CLOUDINARY_UPLOAD_PRESET=your_cloudinary_upload_preset
 
 ---
 
-## 📂 5. Project Structure
+## 📂 6. Project Structure
 
 โครงสร้างโฟลเดอร์สำหรับจัดการหลาย SDK:
 
