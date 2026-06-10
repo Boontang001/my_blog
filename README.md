@@ -25,6 +25,53 @@ graph TD
 
 ---
 
+## 📊 ลำดับขั้นตอนการทำงาน (System Flows & Sequence Diagrams)
+
+การทำงานของระบบบล็อกนี้แบ่งออกเป็น 2 Flow สำคัญ ได้แก่ ระบบการระบุตัวตน (Authentication) และระบบการเขียนบทความ (Content Creation) ดังนี้:
+
+### 1. ลำดับขั้นตอนการ Login & Sync User Profile
+ขั้นตอนเมื่อผู้ใช้อัปเดตและซิงค์ข้อมูลบัญชีระหว่าง Firebase Auth และ Supabase:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as ผู้ใช้/ผู้เขียน
+    participant App as Vue 3 Client (App)
+    participant Auth as Firebase Auth
+    participant DB as Supabase DB (PostgreSQL)
+
+    User->>App: คลิกปุ่มเข้าสู่ระบบ (เช่น Google Sign-In)
+    App->>Auth: เรียกใช้ฟังก์ชัน signInWithPopup()
+    Auth-->>App: คืนค่า Credentials (UID, Email, Profile Picture)
+    App->>DB: บันทึก/อัปเดตโปรไฟล์ (Upsert Table 'profiles' โดยใช้ UID)
+    Note over DB: ใช้ Firebase UID เป็น Primary Key<br/>เพื่อความปลอดภัยและเชื่อมโยงกับบทความ
+    DB-->>App: คืนสถานะการบันทึกสำเร็จ (Success)
+    App->>App: บันทึกสถานะผู้ใช้งานลง Pinia Store (auth.js)
+    App-->>User: เข้าสู่ระบบสำเร็จ -> เปลี่ยนหน้าไปที่ Dashboard
+```
+
+### 2. ลำดับขั้นตอนการอัปโหลดรูปภาพและการเขียนบทความ
+ขั้นตอนเมื่อผู้เขียนบล็อกอัปโหลดรูปภาพหน้าปกตรงไปยัง Cloudinary และเขียนเนื้อหาลงฐานข้อมูล Supabase:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Writer as ผู้เขียนบล็อก
+    participant App as Vue 3 Client (Editor)
+    participant Cloudinary as Cloudinary API
+    participant DB as Supabase DB (PostgreSQL)
+
+    Writer->>App: เลือกภาพหน้าปกบล็อก (Cover Image)
+    App->>Cloudinary: ส่งไฟล์รูปภาพอัปโหลดตรง (Unsigned Preset API)
+    Cloudinary-->>App: ส่งกลับ Secure Image URL (HTTPS)
+    Writer->>App: เขียนเนื้อหาบล็อก (Markdown) และกด 'เผยแพร่' (Publish)
+    App->>DB: บันทึกข้อมูลบทความ (Title, Content, Cover URL, Author UID)
+    DB-->>App: บันทึกสำเร็จ (Post Created Successfully)
+    App-->>Writer: แสดงบทความเวอร์ชันเต็ม และแจ้งเตือนความสำเร็จ
+```
+
+---
+
 ## ✨ คุณสมบัติเด่น (Key Features)
 
 *   **⚡ High Performance**: หน้าเว็บโหลดรูปภาพรวดเร็วมากจาก Cloudinary CDN พร้อมโค้ด Vue 3 ที่ผ่านการบิลด์ด้วย Vite
@@ -51,6 +98,24 @@ graph TD
 4. **UI/UX ระดับพรีเมียม (Interactive Login UI)**
    *   หน้าจอการกรอกข้อมูลที่มี Dynamic Validation คอยแจ้งเตือนการกรอกอีเมลผิดรูปแบบ หรือรหัสผ่านสั้นเกินไปก่อนที่จะกดยืนยัน
    *   แสดง Loading states ด้วยเอฟเฟกต์ Glassmorphism สวยงาม เพื่อให้ผู้ใช้งานทราบสถานะการสื่อสารกับ Server
+
+### 📋 ขอบเขตการทำงานของระบบ Login (Scope of Login Features)
+
+เพื่อระบุขอบเขตการพัฒนาที่ชัดเจน ระบบระบุตัวตนได้รับการกำหนดขอบเขตออกเป็นสองส่วนดังนี้:
+
+**✅ สิ่งที่ระบบรองรับ (In-Scope)**
+*   **Authentication & Registration**: รองรับการลงทะเบียนและเข้าสู่ระบบด้วย Email/Password และ Google Account (OAuth)
+*   **Password Reset**: รองรับการส่งลิงก์เพื่อรีเซ็ตรหัสผ่านไปยังอีเมลกรณีที่ผู้ใช้งานลืมรหัสผ่าน
+*   **Session State**: ระบบจดจำเซสชันการล็อกอินของผู้ใช้ใน Local Client (ไม่เด้งออกเมื่อผู้ใช้ปิดหน้าจอหรือเปิดแท็บใหม่)
+*   **Automatic Profile Binding**: ทุกไอดีที่ลงทะเบียนผ่าน Firebase จะเชื่อมโยงข้อมูลโปรไฟล์โดยอัตโนมัติลงบนตาราง `profiles` ใน Supabase PostgreSQL
+*   **Route Protection**: บล็อกการเข้าถึงหน้าที่จำกัดเฉพาะผู้ล็อกอิน (หน้า Editor และ หน้า Dashboard)
+*   **Client Validation**: ระบบตรวจสอบความถูกต้องของฟอร์ม (อีเมลและรหัสผ่าน) ฝั่ง Client ก่อนส่งคำขอไปยังระบบ Auth
+
+**❌ สิ่งที่ไม่รองรับในเฟสแรก (Out-of-Scope)**
+*   **Other Social Providers**: การเข้าสู่ระบบด้วยบริการอื่นๆ เช่น Facebook, Twitter, GitHub, หรือ Apple Sign-In
+*   **Granular Role Management (RBAC)**: ระบบจำกัดสิทธิ์ผู้ใช้แบบซับซ้อน เช่น การแบ่งกลุ่มสิทธิ์เป็น Super Admin, Editors, Contributors (ในรุ่นนี้ ผู้ที่ล็อกอินทั้งหมดจะมีสิทธิ์เท่าเทียมกันในการเขียนและแก้ไขบล็อกส่วนตัวของตนเอง)
+*   **Two-Factor Authentication (2FA)**: ระบบยืนยันตัวตนแบบสองขั้นตอนผ่าน OTP หรือแอปพลิเคชัน Authenicator
+*   **Session Idle Timeout**: ระบบจับเวลารับรู้ความเงียบหาย (Idle) เพื่อเตะผู้ใช้งานออกจากระบบโดยอัตโนมัติเมื่อไม่มีการขยับเมาส์
 
 ---
 
@@ -81,6 +146,58 @@ src/
 │   └── cloudinary.js    # ฟังก์ชันสำหรับส่งไฟล์ภาพไปยัง Cloudinary
 ├── App.vue          # Root component ของโปรเจกต์
 └── main.js          # จุดเริ่มต้นแอปพลิเคชัน
+```
+
+---
+
+## 🗄️ โครงสร้างข้อมูล (Database Structure & Schema)
+
+ความสัมพันธ์ของข้อมูลทั้งหมดในฐานข้อมูล Supabase (PostgreSQL) แสดงผ่าน ER Diagram และรายละเอียดโครงสร้างตารางดังนี้:
+
+### 1. แผนภาพความสัมพันธ์ข้อมูล (ER Diagram)
+
+```mermaid
+erDiagram
+    PROFILES ||--o{ POSTS : "writes"
+    PROFILES ||--o{ COMMENTS : "writes"
+    POSTS ||--o{ COMMENTS : "has"
+    POSTS ||--o{ POST_TAGS : "tagged"
+    TAGS ||--o{ POST_TAGS : "groups"
+
+    PROFILES {
+        text firebase_uid PK "ไอดีจาก Firebase Auth"
+        text username "ชื่อผู้ใช้ (ไม่ซ้ำ)"
+        text full_name "ชื่อจริง"
+        text avatar_url "ลิงก์รูปภาพโปรไฟล์บน Cloudinary"
+        timestamp created_at "เวลาลงทะเบียน"
+    }
+    POSTS {
+        uuid id PK "ไอดีบทความ"
+        text author_id FK "ไอดีผู้เขียน (profiles.firebase_uid)"
+        text title "หัวข้อบทความ"
+        text slug "URL ที่เป็นมิตร (Friendly URL)"
+        text summary "เนื้อหาย่อ"
+        text content "เนื้อหาเต็ม (Markdown)"
+        text cover_image "ลิงก์รูปภาพหน้าปกบน Cloudinary"
+        text status "สถานะ (draft / published)"
+        timestamp created_at "เวลาที่สร้าง"
+        timestamp updated_at "เวลาที่แก้ไข"
+    }
+    COMMENTS {
+        uuid id PK "ไอดีคอมเมนต์"
+        uuid post_id FK "ไอดีบทความ (posts.id)"
+        text author_id FK "ไอดีคนคอมเมนต์ (profiles.firebase_uid)"
+        text content "เนื้อหาคอมเมนต์"
+        timestamp created_at "เวลาคอมเมนต์"
+    }
+    TAGS {
+        uuid id PK "ไอดีแท็ก"
+        text name "ชื่อแท็ก (ไม่ซ้ำ)"
+    }
+    POST_TAGS {
+        uuid post_id PK, FK "ไอดีบทความ"
+        uuid tag_id PK, FK "ไอดีแท็ก"
+    }
 ```
 
 ---
