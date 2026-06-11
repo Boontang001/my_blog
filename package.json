@@ -1,0 +1,29 @@
+{
+  "name": "premium-retro-blog",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.4",
+    "@vueuse/motion": "^2.2.3",
+    "dompurify": "^3.1.6",
+    "firebase": "^10.13.2",
+    "lucide-vue-next": "^0.446.0",
+    "marked": "^14.1.2",
+    "pinia": "^2.2.4",
+    "vue": "^3.5.34",
+    "vue-router": "^4.4.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.6",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.13",
+    "vite": "^8.0.12"
+  }
+}
