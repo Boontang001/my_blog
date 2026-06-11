@@ -297,7 +297,7 @@ const fetchPostForEditing = async () => {
     if (error) throw error;
     
     // Safety check: only author can edit
-    if (data.author_id !== authStore.user.uid) {
+    if (data.author_id !== authStore.user.id) {
       alert('คุณไม่มีสิทธิ์ในการเข้าถึงและแก้ไขเอกสารรายงานฉบับนี้');
       router.push('/dashboard');
       return;
@@ -337,7 +337,7 @@ const savePost = async () => {
       content: content.value.trim(),
       cover_image: coverImage.value,
       status: status.value,
-      author_id: authStore.user.uid,
+      author_id: authStore.user.id,
       updated_at: new Date().toISOString()
     };
 

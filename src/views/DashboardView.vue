@@ -167,10 +167,10 @@
               <form @submit.prevent="updateProfile" class="space-y-sm">
                 <!-- User ID (Monospaced display) -->
                 <div>
-                  <label class="font-label-sm text-label-sm text-on-surface-variant block mb-xs">เลขไอดีสมาชิก (Firebase UID)</label>
+                  <label class="font-label-sm text-label-sm text-on-surface-variant block mb-xs">เลขไอดีสมาชิก (Supabase UID)</label>
                   <input 
                     type="text" 
-                    :value="authStore.user?.uid" 
+                    :value="authStore.user?.id" 
                     disabled 
                     class="w-full p-xs bg-surface-container text-on-surface-variant border border-outline-variant font-label-sm text-[11px] font-mono select-all"
                   />
@@ -259,7 +259,7 @@ const fetchUserPosts = async () => {
     const { data, error } = await supabase
       .from('posts')
       .select('id, title, slug, summary, cover_image, status, created_at')
-      .eq('author_id', authStore.user.uid)
+      .eq('author_id', authStore.user.id)
       .order('created_at', { ascending: false });
 
     if (error) throw error;

@@ -69,7 +69,7 @@
 
         <!-- Delete Button (Only for comment creator) -->
         <button 
-          v-if="authStore.user && authStore.user.uid === comment.author_id" 
+          v-if="authStore.user && authStore.user.id === comment.author_id" 
           @click="deleteComment(comment.id)" 
           class="text-error hover:bg-red-50 p-xs border border-transparent hover:border-error transition-all absolute top-2 right-2 flex items-center justify-center active:scale-90"
           title="ลบความคิดเห็น"
@@ -136,7 +136,7 @@ const submitComment = async () => {
       .from('comments')
       .insert({
         post_id: props.postId,
-        author_id: authStore.user.uid,
+        author_id: authStore.user.id,
         content: newComment.value.trim()
       });
 
